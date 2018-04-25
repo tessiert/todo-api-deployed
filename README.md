@@ -1,4 +1,6 @@
-![Preview](https://media.giphy.com/media/TIizWFmBII3ljU8OIL/giphy.gif)
+<p align="center">
+  <img width="460" src="https://media.giphy.com/media/2wU5k2zFA4nvvSMjfR/giphy.gif">
+</p>
 
 ### Final Project: API from Scratch + Heroku Deploy
 
