@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" data-framework="jquery">
+
+<head>
+  <meta charset="utf-8">
+  <title>Django TODOs API</title>
+  <link rel="stylesheet" href="static/css/base.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="stylesheet" href="static/css/app.css">
+</head>
+
+<body>
+  <section id="todoapp">
+    <header id="header">
+      <h1>todos</h1>
+      <form action="{% url 'create' %}" method='POST'>
+        {% csrf_token %}
+        <input id="new-todo" placeholder="What needs to be done?" name='title' autofocus="">
+      </form>
+
+    </header>
+    <section id="main" style="display: block;">
+      <input id="toggle-all" type="checkbox">
+      <label for="toggle-all">Mark all as complete</label>
+      <ul id="todo-list">
+        {% for todo in todos %}
+          <li data-id="{{ todo.id }}" {% if todo.completed %}class="completed"{% endif %}>
+            <div class="view">
+              <form action="{% url 'toggle' %}" method='POST' class='js-toggle-form'>
+                {% csrf_token %}
+                <input type="hidden" name="todo_id" value="{{ todo.id }}">
+                <input class="toggle" type="checkbox" {% if todo.completed %}checked="checked"{% endif %}>
+              </form>
+              <label class='js-todo-title'>{{ todo.title }}</label>
+              <form action="{% url 'destroy' %}" method='POST' class='js-destroy-form'>
+                {% csrf_token %}
+                <input type="hidden" name="todo_id" value="{{ todo.id }}">
+                <button class="destroy"></button>
+              </form>
+            </div>
+            <input class="edit" value="hello">
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+    <footer id="footer" style="display: block;">
+      <span id="todo-count"><strong>{{ pending_count }}</strong> item left</span>
+      <ul id="filters">
+        <li>
+          <a {% if filter == 'all' %}class="selected"{% endif %} href="/?status=all">All</a>
+        </li>
+        <li>
+          <a {% if filter == 'active' %}class="selected"{% endif %} href="?status=active">Active</a>
+        </li>
+        <li>
+          <a {% if filter == 'complted' %}class="selected"{% endif %} href="?status=completed">Completed</a>
+        </li>
+      </ul>
+    </footer>
+  </section>
+  <footer id="info">
+    <p>Built by <a href="https://rmotr.com">RMOTR</a> for our <a href="https://rmotr.com/web-development-django-python-course">Web Development Course</a></p>
+    <p>Forked from<a href="http://todomvc.com">TodoMVC</a></p>
+    <p>Created by <a href="http://sindresorhus.com">Sindre Sorhus</a></p>
+  </footer>
+  <script src="static/js/jquery.js"></script>
+  <script src="static/js/app.js"></script>
+</body>
+
+</html>

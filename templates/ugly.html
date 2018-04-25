@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" data-framework="jquery">
+<head>
+  <style media="screen">
+    .completed{
+      text-decoration: line-through;
+    }
+    form.inline{
+      display: inline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create a new TODO</h1>
+  <form action="{% url 'create' %}" method='POST'>
+    {% csrf_token %}
+    Title: <input type="text" name='title'> <input type="submit" value="Create TODO">
+  </form>
+  <h3>Todos</h3>
+  <p>Displaying TODOs:
+    {% if filter == 'all' %}
+      All
+    {% else %}
+      <a href="/?status=all">All</a>
+    {% endif %}
+    {% if filter == 'active' %}
+      Active
+    {% else %}
+      <a href="/?status=active">Active</a>
+    {% endif %}
+    {% if filter == 'completed' %}
+      Done
+    {% else %}
+      <a href="/?status=completed">Done</a>
+    {% endif %}
+  </p>
+  <ul>
+    {% for todo in todos %}
+      <li>
+        <label {% if todo.completed %}class="completed"{% endif %}>{{ todo.title }}</label>
+        {% if todo.completed %}
+          <span>(completed)</span>
+        {% endif %}
+        <form action="{% url 'toggle' %}" method='POST' class='inline'>
+          {% csrf_token %}
+          <input type="hidden" name="todo_id" value="{{ todo.id }}">
+          <input type="submit" name='toggle' value='Toggle'>
+        </form>
+        <form action="{% url 'destroy' %}" method='POST' class='inline'>
+          {% csrf_token %}
+          <input type="hidden" name="todo_id" value="{{ todo.id }}">
+          <input type="submit" name='destroy' value='Destroy'>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+  <p>({{ pending_count }} items left)</p>
+</body>
+</html>
