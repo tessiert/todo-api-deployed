@@ -1,5 +1,9 @@
+
 <p align="center">
   <img width="460" src="https://media.giphy.com/media/2wU5k2zFA4nvvSMjfR/giphy.gif">
+</p>
+<p align="center">
+  <b><a href="https://wdc-class-8-rest-api-deployed.herokuapp.com/" target="_blank">Live Demo</a></b>
 </p>
 
 ### Final Project: API from Scratch + Heroku Deploy
