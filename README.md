@@ -39,6 +39,13 @@ Your job is to implement the API that's under `todos_app/api.py`. URLs and model
 * `test_detail_put.py`
 * `test_detail_patch.py`
 
+To run tests:
+
+```bash
+$ py.test tests/test_list_get.py
+$ py.test tests/test_list_get.py -k test_todo_list
+```
+
 ##### How to regenerate the DB?
 
 The Database is already provided, but if you need to regenerate it, just run:
