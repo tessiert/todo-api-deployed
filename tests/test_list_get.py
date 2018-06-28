@@ -5,7 +5,7 @@ from todos_app.models import Todo
 
 
 @pytest.mark.django_db
-def test_todo_list(django_app):
+def test_todo_list_all_todos(django_app):
     t1 = Todo.objects.create(title='Test Todo 1')
     t2 = Todo.objects.create(title='Test Todo 2', completed=True)
     t3 = Todo.objects.create(title='Test Todo 3')
