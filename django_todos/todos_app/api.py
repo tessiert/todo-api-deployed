@@ -20,8 +20,11 @@ class TodoListView(BaseCSRFExemptView):
             todos = list(Todo.objects.all().values('id', 'title', 'completed'))
         elif (status == 'active'):
             todos = list(Todo.objects.filter(completed=False).values('id', 'title', 'completed'))
-        else:
+        elif (status == 'completed'):
             todos = list(Todo.objects.filter(completed=True).values('id', 'title', 'completed'))
+        else:
+            return JsonResponse({"success": False, 'msg': 'Invalid item status supplied'}, 
+                status=400)
         response = {
             'filter': status, 
             'count': len(todos),
@@ -30,7 +33,23 @@ class TodoListView(BaseCSRFExemptView):
         return JsonResponse(response)
 
     def post(self, request):
-        raise NotImplementedError('List POST')
+        try:
+            payload = json.loads(self.request.body)
+        except ValueError:
+            return JsonResponse({"success": False, "msg": "Provide a valid JSON payload"},
+                status=400)
+        try:
+            todo = Todo.objects.create(
+                title=payload['title'],
+                completed=payload.get('completed', False)
+                )
+        except (ValueError, KeyError):
+            return JsonResponse(
+                {"success": False, "msg": "Provided payload is not valid"},
+                status=400
+                )
+        data = {'title': todo.title, 'completed': todo.completed}
+        return JsonResponse(data, status=201, safe=False)
 
 
 class TodoDetailView(BaseCSRFExemptView):
