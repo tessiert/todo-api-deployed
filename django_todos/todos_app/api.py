@@ -58,7 +58,9 @@ class TodoDetailView(BaseCSRFExemptView):
         return JsonResponse({'id': todo.id, 'title': todo.title, 'completed': todo.completed})
 
     def delete(self, request, todo_id):
-        raise NotImplementedError('Detail DELETE')
+        todo = get_object_or_404(Todo, pk=todo_id)
+        todo.delete()
+        return HttpResponse(status=204)
 
     def patch(self, request, todo_id):
         raise NotImplementedError('Detail PATCH')
