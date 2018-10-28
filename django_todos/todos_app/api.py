@@ -54,7 +54,8 @@ class TodoListView(BaseCSRFExemptView):
 
 class TodoDetailView(BaseCSRFExemptView):
     def get(self, request, todo_id):
-        raise NotImplementedError('Detail POST')
+        todo = get_object_or_404(Todo, pk=todo_id)
+        return JsonResponse({'id': todo.id, 'title': todo.title, 'completed': todo.completed})
 
     def delete(self, request, todo_id):
         raise NotImplementedError('Detail DELETE')
