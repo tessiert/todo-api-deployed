@@ -35,7 +35,7 @@ class TodoListView(BaseCSRFExemptView):
     def post(self, request):
         try:
             payload = json.loads(self.request.body)
-        except ValueError:
+        except (KeyError, ValueError):
             return JsonResponse({"success": False, "msg": "Provide a valid JSON payload"},
                 status=400)
         try:
@@ -43,7 +43,7 @@ class TodoListView(BaseCSRFExemptView):
                 title=payload['title'],
                 completed=payload.get('completed', False)
                 )
-        except (ValueError, KeyError):
+        except (KeyError, ValueError):
             return JsonResponse(
                 {"success": False, "msg": "Provided payload is not valid"},
                 status=400
@@ -66,4 +66,24 @@ class TodoDetailView(BaseCSRFExemptView):
         raise NotImplementedError('Detail PATCH')
 
     def put(self, request, todo_id):
-        raise NotImplementedError('Detail PUT')
+        todo = get_object_or_404(Todo, pk=todo_id)
+        try:
+            payload = json.loads(self.request.body)
+        except (KeyError, ValueError):
+            return JsonResponse({"success": False, "msg": "Provide a valid JSON payload"}, 
+                status=400)
+        for field in Todo._meta.get_fields():
+            if (field.name in ['id', 'created', 'modified']):    # Not user-specified fields
+                continue
+            if (field.name not in payload.keys()):
+                return JsonResponse({'error': 'Missing argument: {}'.format(field.name)}, 
+                    status=400)
+            try:
+                setattr(todo, field.name, payload[field.name])
+            except TypeError:
+                return JsonResponse({"success": False, "msg": "Provide a valid JSON payload"}, 
+                    status=400)
+        todo.save()
+        return HttpResponse(status=204)
+
+
