@@ -63,7 +63,28 @@ class TodoDetailView(BaseCSRFExemptView):
         return HttpResponse(status=204)
 
     def patch(self, request, todo_id):
-        raise NotImplementedError('Detail PATCH')
+        todo = get_object_or_404(Todo, pk=todo_id)
+        try:
+            payload = json.loads(self.request.body)
+        except (KeyError, ValueError):
+            return JsonResponse({"success": False, "msg": "Provide a valid JSON payload"}, 
+                status=400)
+        for field in Todo._meta.get_fields():
+            # 1st clause: non-user specified fields, 2nd clause: not all fields need be present for 'PATCH'
+            if (field.name in ['id', 'created', 'modified']) or (field.name not in payload.keys()):
+                continue
+            else:
+                try:
+                    setattr(todo, field.name, payload[field.name])
+                except TypeError:
+                    return JsonResponse({"success": False, "msg": "Provide a valid JSON payload"}, 
+                        status=400)
+        if ('action' in payload.keys() and 'toggle' in payload.values()):
+            # Toggle status of todo list item
+            todo.completed = not todo.completed
+        todo.save()
+        return HttpResponse(status=204)
+
 
     def put(self, request, todo_id):
         todo = get_object_or_404(Todo, pk=todo_id)
